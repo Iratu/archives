@@ -1,3 +1,3 @@
 set :rails_env, "production"
 
-server "oumae.donmai.us", :user => "archiver", :roles => %w(web app db)
+server "localhost", :user => "danbooru", :roles => %w(web app db)
