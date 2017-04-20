@@ -16,7 +16,7 @@ class PoolVersion < ActiveRecord::Base
   end
 
   def self.calculate_version(pool_id, updated_at)
-    1 + PoolVersion.where(pool_id: pool_id).where("updated_at < ?", updated_at).count
+    1 + where("pool_id = ?", pool_id).maximum(:version).to_i
   end
 
   def self.create_from_json(json)
@@ -27,7 +27,7 @@ class PoolVersion < ActiveRecord::Base
     subject = PoolVersion.new
     subject.version = calculate_version(json["pool_id"], updated_at)
 
-    if previous && previous.updater_id == json["updater_id"] && previous.updated_at >= 1.hour.ago
+    if previous && previous.updater_id == json["updater_id"] && updated_at - previous.updated_at < 1.hour
       subject = previous
       previous = find_previous(previous.pool_id, previous.updated_at)
     end
